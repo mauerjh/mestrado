@@ -201,34 +201,3 @@ normalized_counts <- counts(dds_uni, normalized=TRUE)
 write.table(normalized_counts, file="normalized_counts.txt", sep="\t", quote=F, col.names=NA)
 
 ```
-
-Let's take a look at the dispersion estimates 
-```{r include = TRUE, message=FALSE, warning=FALSE} 
-plotDispEsts(dds_uni)
-
-```
-You expect your data to generally scatter around the curve, with the dispersion decreasing with increasing mean expression levels. If you see a cloud or different shapes, then you might want to explore your data more to see if you have contamination (mitochondrial, etc.) or outlier samples.
-
-#Size factor QC
-
-A main assumption in library size factor calculation of edgeR and DESeq2 (and others) is that the majority of genes remain unchanged. Plotting the distribution of gene ratios between each gene and the average gene can show how true this is. Not super useful for many samples because the plot becomes crowed.
-
-```{r include = TRUE, message=FALSE, warning=FALSE} 
-library(DEGreport)
-degCheckFactors(normalized_counts)
-```
-
-3. Look at results
-```{r include = TRUE, message=FALSE, warning=FALSE} 
-
-res <- results(dds_uni)
-plot(metadata(res)$filterNumRej, 
-     type="b", ylab="number of rejections",
-     xlab="quantiles of filter")
-lines(metadata(res)$lo.fit, col="red")
-abline(v=metadata(res)$filterTheta)
-summary(res)
-resOrdered <- res[order(res$pvalue),]
-resOrdered 
-write.csv(x = resOrdered, file = "resOrdered.csv")
-```
